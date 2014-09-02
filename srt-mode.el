@@ -24,6 +24,7 @@
 (setq srt-hash-event-format (make-hash-table :test 'equal))
 
 (defvar srt-media-player "mplayer2")
+(defvar srt-media-player-parameters "")
 
 (defvar srt-font-lock-keywords
   (list
@@ -152,7 +153,7 @@
 (defun mplayer ()
   "Run mplayer"
   (interactive)
-  (start-process srt-media-player nil srt-media-player "-ss" (srt-get-current-start-time) (srt-get-video-name))
+  (apply 'start-process srt-media-player nil srt-media-player "-ss" (replace-regexp-in-string "," "." (srt-get-current-start-time)) (srt-get-video-name) (split-string srt-media-player-parameters " "))
   )
 
 (defun srt-shift-time (shift-amount)
