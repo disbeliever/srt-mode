@@ -166,7 +166,7 @@
          (shifted-start-time (srt-shift-timestamp start-time shift-amount))
          (shifted-end-time (srt-shift-timestamp end-time shift-amount))
          )
-      (beginning-of-line)
+      (backward-sentence)
       (search-forward start-time)
       (replace-match shifted-start-time)
 
