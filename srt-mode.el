@@ -23,8 +23,8 @@
 
 (setq srt-hash-event-format (make-hash-table :test 'equal))
 
-(defvar srt-media-player "mplayer2")
-(defvar srt-media-player-parameters "")
+(defvar srt-media-player "mplayer")
+(defvar srt-media-player-parameters "-ss")
 
 (defvar srt-font-lock-keywords
   (list
@@ -150,10 +150,25 @@
   (let ((s (if (symbolp str) (symbol-name str) str)))
     (replace-regexp-in-string "\\(^[[:space:]\n]*\\|[[:space:]\n]*$\\)" "" s)))
 
-(defun mplayer ()
+(defun srt-mplayer ()
   "Run mplayer"
   (interactive)
-  (apply 'start-process srt-media-player nil srt-media-player "-ss" (replace-regexp-in-string "," "." (srt-get-current-start-time)) (srt-get-video-name) (split-string srt-media-player-parameters " "))
+  (let
+      (
+       (args (append
+            (split-string srt-media-player-parameters " ")
+            (list (replace-regexp-in-string "," "." (srt-get-current-start-time)))
+            ))
+       )
+    (print args)
+    (apply 'start-process
+           srt-media-player
+           nil
+           srt-media-player
+           (srt-get-video-name)
+           args
+           )
+    )
   )
 
 (defun srt-shift-time (shift-amount)
@@ -221,7 +236,7 @@
 (add-to-list 'auto-mode-alist '("\\.srt$" . srt-mode))
 
 (defvar srt-mode-map (make-keymap))
-(define-key srt-mode-map "\C-c\C-o" 'mplayer)
+(define-key srt-mode-map "\C-c\C-o" 'srt-mplayer)
 (define-key srt-mode-map "\C-c\C-s" 'srt-shift-time)
 ;(define-key srt-mode-map "\C-c\C-f" 'srt-change-fps)
 (define-key srt-mode-map "\C-c\C-n" 'srt-new-entry)
